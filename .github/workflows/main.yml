@@ -28,19 +28,26 @@ jobs:
   release-on-push:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-      with:
-        fetch-depth: '0'
+    - uses: actions/checkout@v2
     - name: Bump version and push tag
+      id: bump_tag
       uses: anothrNick/github-tag-action@1.17.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        RELEASE_BRANCHES: master
+        DRY_RUN : true
     - name: 'Get Previous tag'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@master"
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    - name: Previous tag
+      run: echo ${{ steps.previoustag.outputs.tag }}
+    - name: Next Tag
+      run: echo ${{ steps.bump_tag.outputs.new_tag }}
+    - name: Tag
+      run: echo ${{ steps.bump_tag.outputs.tag }}
     - name: Create Release
       if: github.ref == 'refs/heads/master'
       id: create_release
@@ -48,8 +55,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ steps.previoustag.outputs.tag }}
-        release_name: Release ${{ steps.previoustag.outputs.tag }}
+        tag_name: ${{ steps.bump_tag.outputs.new_tag }}
+        release_name: Release ${{ steps.bump_tag.outputs.new_tag }}
         draft: false
         prerelease: false
     - name: Create Pre-Release
@@ -59,7 +66,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ steps.previoustag.outputs.tag }}
-        release_name: Release ${{ steps.previoustag.outputs.tag }}
+        tag_name: ${{ steps.bump_tag.outputs.new_tag }}
+        release_name: Release ${{ steps.bump_tag.outputs.new_tag }}
         draft: false
         prerelease: false
