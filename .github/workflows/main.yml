@@ -5,8 +5,9 @@ on:
       - master
       - develop
 jobs:
-  build:
+  bump_tag:
     runs-on: ubuntu-latest
+    name: Bump tag
     steps:
     - uses: actions/checkout@master
       with:
@@ -20,6 +21,22 @@ jobs:
     - id: step1
       run:  echo  ${{needs.bump_version.outputs.new_tag}}
     - run:  echo ${{needs.bump_version.outputs.tag }}
-    - run: echo  ${{ github.head_ref }}
+    - run: echo  ${{ github.ref.heads }}
     - run: echo  ${{ github.event_name }}
     - run: echo  ${{ github.event.action }}
+      
+  build_master:
+    name: Create Release
+    needs: [bump_tag]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          draft: false
+          prerelease: false
