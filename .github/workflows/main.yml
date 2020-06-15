@@ -23,9 +23,9 @@ jobs:
       with:
         version: ${{ steps.previoustag.outputs.tag }}
     - name: git tag
-      run: echo ${{ steps.previoustag.outputs.tag }} ${{ steps.previoustag.semvers.tag }}
+      run: echo ${{ steps.previoustag.outputs.tag }} ${{ steps.semvers.outputs.tag }}
     - name: set env
-      run: echo "::set-env name=tag::${{ steps.previoustag.semvers.tag }}"
+      run: echo "::set-env name=SELECTED_TAG::${{ steps.previoustag.outputs.tag }}"
 #     - name: bump_version
 #       uses: anothrNick/github-tag-action@1.17.2
 #       env:
@@ -46,12 +46,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - run: echo $tag
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          draft: false
-          prerelease: false
+      - run: echo $SELECTED_TAG
+#       - name: Create Release
+#         id: create_release
+#         uses: actions/create-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+#         with:
+#           draft: false
+#           prerelease: false
