@@ -5,6 +5,26 @@ on:
       - develop
 
 jobs:
+#   release-on-push:
+#     if: github.ref == 'refs/heads/master'
+#     runs-on: ubuntu-latest
+#     env:
+#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#     steps:
+#       - uses: rymndhng/release-on-push-action@master
+#         with:
+#           bump_version_scheme: major
+        
+#   prerelease-on-push:
+#     if: github.ref == 'refs/heads/develop'
+#     runs-on: ubuntu-latest
+#     env:
+#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#     steps:
+#       - uses: rymndhng/release-on-push-action@master
+#         with:
+#           bump_version_scheme: minor
+
   release-on-push:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
