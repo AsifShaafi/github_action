@@ -24,6 +24,8 @@ jobs:
         version: ${{ steps.previoustag.outputs.tag }}
     - name: git tag
       run: echo ${{ steps.previoustag.outputs.tag }} ${{ steps.previoustag.semvers.tag }}
+    - name: set env
+      run: echo "::set-env name=action_state::${{ steps.previoustag.semvers.tag }}"
 #     - name: bump_version
 #       uses: anothrNick/github-tag-action@1.17.2
 #       env:
