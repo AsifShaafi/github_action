@@ -17,4 +17,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
     - id: step1
-      run:  echo ${{bump_version.outputs.new_tag}} ${{bump_version.outputs.tag}} ${{ github.event_name}} ${{ github.event.action }}
+      run:  echo ${{needs.bump_version.outputs.new_tag}} ${{needs.bump_version.outputs.tag}} ${{ github.event_name}} ${{ github.event.action }}
