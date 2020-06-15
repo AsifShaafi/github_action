@@ -16,7 +16,7 @@ jobs:
           bump_version_scheme: major
         
   prerelease-on-push:
-    if: github.ref == 'ref/head/develop'
+    if: github.ref == 'ref/heads/develop'
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
