@@ -5,22 +5,68 @@ on:
       - develop
 
 jobs:
-  release-on-push:
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - uses: rymndhng/release-on-push-action@master
-        with:
-          bump_version_scheme: major
+#   release-on-push:
+#     if: github.ref == 'refs/heads/master'
+#     runs-on: ubuntu-latest
+#     env:
+#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#     steps:
+#       - uses: rymndhng/release-on-push-action@master
+#         with:
+#           bump_version_scheme: major
         
-  prerelease-on-push:
-    if: github.ref == 'ref/head/develop'
+#   prerelease-on-push:
+#     if: github.ref == 'refs/heads/develop'
+#     runs-on: ubuntu-latest
+#     env:
+#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#     steps:
+#       - uses: rymndhng/release-on-push-action@master
+#         with:
+#           bump_version_scheme: minor
+
+  release-on-push:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: rymndhng/release-on-push-action@master
-        with:
-          bump_version_scheme: minor
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: '0'
+    - name: Bump version
+      id: bump_tag
+      uses: anothrNick/github-tag-action@1.17.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        RELEASE_BRANCHES: master
+        DRY_RUN : true
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@master"
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    - name: Next Tag
+      run: echo ${{ steps.bump_tag.outputs.new_tag }}
+    - name: Tag
+      run: echo ${{ steps.bump_tag.outputs.tag }}
+    - name: Create Release
+      if: github.ref == 'refs/heads/master'
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ steps.bump_tag.outputs.new_tag }}
+        release_name: Release ${{ steps.bump_tag.outputs.new_tag }}
+        draft: false
+        prerelease: false
+    - name: Create Pre-Release
+      if: github.ref == 'refs/heads/develop'
+      id: create_prerelease
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ steps.bump_tag.outputs.new_tag }}
+        release_name: ${{ steps.bump_tag.outputs.new_tag }}
+        draft: false
+        prerelease: true
