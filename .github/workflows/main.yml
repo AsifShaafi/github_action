@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@master
       with:
         fetch-depth: '0'
-    - name: Bump version major
+    - name: Bump version
       id: bump_tag
       uses: anothrNick/github-tag-action@1.17.2
       env:
