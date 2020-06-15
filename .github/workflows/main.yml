@@ -23,7 +23,7 @@ jobs:
     - run:  echo ${{needs.bump_version.outputs.tag }}
     - run: echo  ${{ github.ref.heads }}
     - run: echo  ${{ github.event_name }}
-    - run: echo  ${{ github.event.action }}
+    - run: echo  ${{ git describe }}
       
   build_master:
     name: Create Release
@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Git describe
+        run: git describe
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
