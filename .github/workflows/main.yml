@@ -25,7 +25,7 @@ jobs:
     - name: git tag
       run: echo ${{ steps.previoustag.outputs.tag }} ${{ steps.previoustag.semvers.tag }}
     - name: set env
-      run: echo "::set-env name=action_state::${{ steps.previoustag.semvers.tag }}"
+      run: echo "::set-env name=tag::${{ steps.previoustag.semvers.tag }}"
 #     - name: bump_version
 #       uses: anothrNick/github-tag-action@1.17.2
 #       env:
@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - run: echo ${{ bump_tag.steps.previoustag.semvers.tag }}
+      - run: echo $tag
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
