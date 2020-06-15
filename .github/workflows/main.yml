@@ -12,18 +12,30 @@ jobs:
     - uses: actions/checkout@master
       with:
         fetch-depth: '0'
-    - name: bump_version
-      uses: anothrNick/github-tag-action@1.17.2
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@master"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: true
-        DRY_RUN: true
-    - id: step1
-      run:  echo  ${{needs.bump_version.outputs.new_tag}}
-    - run:  echo ${{needs.bump_version.outputs.tag }}
-    - run: echo  ${{ github.ref.heads }}
-    - run: echo  ${{ github.event_name }}
-    - run: echo  ${{ git describe }}
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    - name: 'Get next minor version'
+      id: semvers
+      uses: "WyriHaximus/github-action-next-semvers@master"
+      with:
+        version: ${{ steps.previoustag.outputs.tag }}
+    - name: git tag
+      run: echo ${{ steps.previoustag.outputs.tag }} ${{ steps.previoustag.semvers.tag }}
+#     - name: bump_version
+#       uses: anothrNick/github-tag-action@1.17.2
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         WITH_V: true
+#         DRY_RUN: true
+#     - id: step1
+#       run:  echo  ${{needs.bump_version.outputs.new_tag}}
+#     - run:  echo ${{needs.bump_version.outputs.tag }}
+#     - run: echo  ${{ github.ref.heads }}
+#     - run: echo  ${{ github.event_name }}
+#     - run: echo  ${{ git describe }}
       
   build_master:
     name: Create Release
@@ -32,8 +44,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Git describe
-        run: git describe
+      - run: echo ${{ bump_tag.steps.previoustag.semvers.tag }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
