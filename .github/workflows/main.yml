@@ -16,8 +16,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        DRY_RUN: true
     - id: step1
       run:  echo  ${{needs.bump_version.outputs.new_tag}}
-    - run:  echo ${{needs.bump_version.output.tag}}
-    - run: echo  ${{ github.ref }}
+    - run:  echo ${{needs.bump_version.outputs.tag }}
+    - run: echo  ${{ github.head_ref }}
+    - run: echo  ${{ github.event_name }}
     - run: echo  ${{ github.event.action }}
